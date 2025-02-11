@@ -1,23 +1,36 @@
 #!/usr/bin/env python
 
+import aiofiles
+import asyncio
 from markdownify import markdownify
 from pathlib import Path
 
-file_list = sorted(Path('./data/bookmarks').glob('*.html'))
-
-md_text_list = []
-
-for file_path in file_list:
-    html_file = open(file_path, "r").read()
+async def process_file(file_path):
+    async with aiofiles.open(file_path, "r") as f:
+        html_file = await f.read()
     md_text = markdownify(html_file)
-    md_text_list.append("##" + md_text.split("###")[1])
+    return "##" + md_text.split("###")[1]
 
-fp = Path("data/bookmarks.md").resolve()
-fp.parent.mkdir(exist_ok=True)
-fp.touch()
+async def write_results(fp, md_text_list):
+    async with aiofiles.open(fp, "w") as f:
+        for i, md_text in enumerate(md_text_list):
+            await f.write(md_text)
+            if i < len(md_text_list) - 1:
+                await f.write("\n")
 
-with open(fp, "w") as f:
-    for i, md_text in enumerate(md_text_list):
-        f.write(md_text)
-        if i < len(md_text_list) - 1:
-            f.write("\n")
+async def main():
+    file_list = sorted(Path('./data/bookmarks').glob('*.html'))
+
+    # Process all files in parallel
+    tasks = [process_file(file_path) for file_path in file_list]
+    md_text_list = await asyncio.gather(*tasks)
+
+    # Write results
+    fp = Path("data/bookmarks.md").resolve()
+    fp.parent.mkdir(exist_ok=True)
+    fp.touch()
+
+    await write_results(fp, md_text_list)
+
+if __name__ == "__main__":
+    asyncio.run(main())
