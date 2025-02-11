@@ -1,0 +1,10 @@
+[project]
+name = "medium-to-markdown"
+version = "0.1.0"
+authors = [
+    { name = "pythoninthegrass", email = "4097471+pythoninthegrass@users.noreply.github.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "markdownify>=0.14.1",
+]
