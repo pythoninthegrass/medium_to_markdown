@@ -26,7 +26,7 @@ python -m pip install -r requirements.txt
 
 ### Medium
 
-Export your bookmarks from Medium. They're in you [account](https://medium.com/me/settings#account) settings under **Security and apps**.
+Export your bookmarks from Medium. They're in your [account](https://medium.com/me/settings#account) settings under **Security and apps**.
 
 Extract the zip file into the `data` directory.
 
